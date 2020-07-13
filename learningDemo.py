@@ -115,6 +115,14 @@ def updateInput(intype):
         v = gwidth
         m = T/2
         in2 = np.exp(-np.square(t-m)/2*v)/(np.sqrt(2*np.pi*v))
+        
+    if "2G" in intype:
+        v = gwidth
+        m = T/4*3
+        A = np.exp(-np.square(t-m)/2*v)/(np.sqrt(2*np.pi*v))
+        m = T/4*1
+        B = np.exp(-np.square(t-m)/2*v)/(np.sqrt(2*np.pi*v))
+        in2 = A + B
   
     in2 = in2/in2.max()
     if "FLAT" in intype:
@@ -144,6 +152,14 @@ def updateOutput(outtype):
         m = T/2
         out2 = np.exp(-np.square(t-m)/2*v)/(np.sqrt(2*np.pi*v))
         
+    if "2G" in outtype:
+        v = gwidth
+        m = T/4*3
+        A = np.exp(-np.square(t-m)/2*v)/(np.sqrt(2*np.pi*v))
+        m = T/4*1
+        B = np.exp(-np.square(t-m)/2*v)/(np.sqrt(2*np.pi*v))
+        out2 = A + B
+    
     out2 = out2/out2.max()
     if "FLAT" in outtype:
         out2 =  t*0 + .5;
@@ -326,8 +342,6 @@ def updateParams(dummy,intype,outtype,tau_in,LR,nTR,CS,PCS):
                State('upload', 'last_modified')])
 def update_output(list_of_contents, list_of_names, list_of_dates):
     global endrawn
-    endrawn = np.zeros((t.size,1),dtype=float, order='C'); 
-    endrawn = endrawn.flatten()
     if list_of_contents is not None:
         df = parse_contents(list_of_contents, list_of_names, list_of_dates)
         print(df)
@@ -340,6 +354,7 @@ def update_output(list_of_contents, list_of_names, list_of_dates):
         if Al >= 1000:
             Al = 999
             A = A[:Al]
+        endrawn = np.zeros((t.size,1),dtype=float, order='C'); 
         endrawn = endrawn.flatten()
         endrawn[:Al] = A[:Al]
         endrawn = endrawn.flatten()
@@ -386,6 +401,7 @@ app.layout = html.Div([
                     {'label': 'Cosine', 'value': 'COS'},
                     {'label': 'Sine', 'value': 'SIN'},
                     {'label': 'Gaussian', 'value': 'GAUSS'},
+                    {'label': 'Double Peaked Gaussian', 'value': '2G'},
                     {'label': 'Flat Signal', 'value': 'FLAT'},
                     {'label': 'Flat Transient', 'value': 'FTR'},
                     {'label': 'Uploaded Function', 'value': 'CUS'}
@@ -404,6 +420,7 @@ app.layout = html.Div([
                     {'label': 'Cosine', 'value': 'COS'},
                     {'label': 'Sine', 'value': 'SIN'},
                     {'label': 'Gaussian', 'value': 'GAUSS'},
+                    {'label': 'Double Peaked Gaussian', 'value': '2G'},
                     {'label': 'Flat Signal', 'value': 'FLAT'},
                     {'label': 'Flat Transient', 'value': 'FTR'},
                     {'label': 'Uploaded Function', 'value': 'CUS'}
